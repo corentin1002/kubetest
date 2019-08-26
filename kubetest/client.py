@@ -568,6 +568,33 @@ class TestClient:
 
         return services
 
+    def get_persistentvolume(self, fields=None, labels=None):
+        """Get PersistentVolume from the cluster.
+
+        Args:
+            fields (dict[str, str]): A dictionary of fields used to restrict
+                the returned collection of PersistentVolume to only those which match
+                these field selectors. By default, no restricting is done.
+            labels (dict[str, str]): A dictionary of labels used to restrict
+                the returned collection of PersistentVolume to only those which match
+                these label selectors. By default, no restricting is done.
+
+        Returns:
+            dict[str, objects.PersistentVolume]: A dictionary where the key is
+            the PersistentVolume name and the value is the PersistentVolume itself.
+        """
+        selectors = utils.selector_kwargs(fields, labels)
+
+        persistentvolume_list = client.CoreV1Api().list_persistent_volume(
+        )
+
+        persistentvolumes = {}
+        for obj in persistentvolume_list.items:
+            persistentvolume = objects.PersistentVolume(obj)
+            persistentvolumes[persistentvolume.name] = persistentvolume
+
+        return persistentvolumes
+
     @staticmethod
     def get_nodes(fields=None, labels=None):
         """Get the Nodes that make up the cluster.
