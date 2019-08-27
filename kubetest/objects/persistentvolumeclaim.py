@@ -1,3 +1,28 @@
+"""Kubetest wrapper for the Kubernetes ``PersistentVolumeClaim`` API Object."""
+
+import logging
+
+from kubernetes import client
+
+from .api_object import ApiObject
+
+log = logging.getLogger('kubetest')
+
+
+class PersistentVolume(ApiObject):
+    """Kubetest wrapper around a Kubernetes `PersistentVolume`_ API Object.
+
+    The actual ``kubernetes.client.V1PersistentVolumeClaim`` instance that this
+    wraps can be accessed via the ``obj`` instance member.
+
+    This wrapper provides some convenient functionality around the
+    API Object and provides some state management for the `PersistentVolumeClaim`_.
+
+    .. _PersistentVolumeClaim:
+        https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#persistentvolumeclaim-v1-core
+    """
+
+    obj_type = client.V1PersistentVolumeClaim
 
     api_clients = {
         'preferred': client.CoreV1Api,
