@@ -586,6 +586,7 @@ class TestClient:
         selectors = utils.selector_kwargs(fields, labels)
 
         persistentvolume_list = client.CoreV1Api().list_persistent_volume(
+		**selectors
         )
 
         persistentvolumes = {}
