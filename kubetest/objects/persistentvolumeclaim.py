@@ -9,8 +9,8 @@ from .api_object import ApiObject
 log = logging.getLogger('kubetest')
 
 
-class PersistentVolume(ApiObject):
-    """Kubetest wrapper around a Kubernetes `PersistentVolume`_ API Object.
+class PersistentVolumeClaim(ApiObject):
+    """Kubetest wrapper around a Kubernetes `PersistentVolumeClaim`_ API Object.
 
     The actual ``kubernetes.client.V1PersistentVolumeClaim`` instance that this
     wraps can be accessed via the ``obj`` instance member.
