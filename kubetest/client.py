@@ -22,7 +22,8 @@ class TestClient:
     and provided to the TestClient during the test setup process.
 
     Args:
-        namespace (str): The namespace associated with the test client.
+        namespace (str): The namespace associated with the test
+        client.
             Each test case will have its own namespace assigned.
     """
 
@@ -586,7 +587,7 @@ class TestClient:
         selectors = utils.selector_kwargs(fields, labels)
 
         persistentvolume_list = client.CoreV1Api().list_persistent_volume(
-		**selectors
+                **selectors
         )
 
         persistentvolumes = {}
@@ -612,7 +613,8 @@ class TestClient:
 
         Returns:
             dict[str, objects.PersistentVolumeClaim]: A dictionary where the key is
-            the PersistentVolumeClaim name and the value is the PersistentVolumeClaim itself.
+            the PersistentVolumeClaim name and the value is the PersistentVolumeClaim
+            itself.
         """
         if namespace is None:
             namespace = self.namespace
