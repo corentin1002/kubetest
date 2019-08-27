@@ -216,6 +216,48 @@ class TestClient:
             service.namespace = self.namespace
         return service
 
+    def load_PersistentVolume(self, path, set_namespace=False):
+        """Load a manifest YAML into a Service object.
+
+        By default, this will augment the Service object with
+        the generated test case namespace. This behavior can be
+        disabled with the ``set_namespace`` flag.
+
+        Args:
+            path (str): The path to the Service manifest.
+            set_namespace (bool): Enable/disable the automatic
+                augmentation of the Service namespace.
+
+        Returns:
+            objects.Service: The Service for the specified manifest.
+        """
+        log.info('loading persistentvolume from path: %s', path)
+        persistentvolume = objects.PersistentVolume.load(path)
+        if set_namespace:
+            persistentvolume.namespace = self.namespace
+        return persistentvolume
+
+    def load_persistentvolumeclaim(self, path, set_namespace=True):
+        """Load a manifest YAML into a Service object.
+
+        By default, this will augment the Service object with
+        the generated test case namespace. This behavior can be
+        disabled with the ``set_namespace`` flag.
+
+        Args:
+            path (str): The path to the Service manifest.
+            set_namespace (bool): Enable/disable the automatic
+                augmentation of the Service namespace.
+
+        Returns:
+            objects.Service: The Service for the specified manifest.
+        """
+        log.info('loading persistentvolumeclaim from path: %s', path)
+        persistentvolumeclaim = objects.PersistentVolumeClaim.load(path)
+        if set_namespace:
+            persistentvolumeclaim.namespace = self.namespace
+        return persistentvolumeclaim
+
     # ****** Generic Helpers on ApiObjects ******
 
     def create(self, obj):
