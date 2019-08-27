@@ -47,7 +47,11 @@ class PersistentVolume(ApiObject):
         if namespace is None:
             namespace = self.namespace
 
-        log.info('creating persistentvolumeclaim "%s" in namespace "%s"', self.name, self.namespace)
+        log.info(
+            'creating persistentvolumeclaim "%s" in namespace "%s"',
+            self.name,
+            self.namespace
+        )
         log.debug('persistentvolumeclaim: %s', self.obj)
 
         self.obj = self.api_client.create_namespaced_persistent_volume_claim(

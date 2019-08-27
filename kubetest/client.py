@@ -621,7 +621,8 @@ class TestClient:
 
         selectors = utils.selector_kwargs(fields, labels)
 
-        persistentvolumeclaim_list = client.CoreV1Api().list_namespaced_persistent_volume_claim(
+        persistentvolumeclaim_list = client.CoreV1Api().\
+            list_namespaced_persistent_volume_claim(
             namespace=namespace,
             **selectors,
         )
