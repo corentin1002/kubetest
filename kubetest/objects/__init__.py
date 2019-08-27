@@ -18,3 +18,4 @@ from .secret import Secret
 from .service import Service
 from .statefulset import StatefulSet
 from .persistentvolume import PersistentVolume
+from .persistentvolumeclaim import PersistentVolumeClaim
