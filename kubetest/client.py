@@ -595,6 +595,41 @@ class TestClient:
 
         return persistentvolumes
 
+    def get_persistentvolumeclaim(self, namespace=None, fields=None, labels=None):
+        """Get PersistentVolumeClaim from the cluster.
+
+        Args:
+            namespace (str): The namespace to get the PersistentVolumeClaim from. If not
+                specified, it will use the auto-generated test case namespace
+                by default.
+            fields (dict[str, str]): A dictionary of fields used to restrict
+                the returned collection of PersistentVolumeClaim to only those which match
+                these field selectors. By default, no restricting is done.
+            labels (dict[str, str]): A dictionary of labels used to restrict
+                the returned collection of PersistentVolumeClaim to only those which match
+                these label selectors. By default, no restricting is done.
+
+        Returns:
+            dict[str, objects.PersistentVolumeClaim]: A dictionary where the key is
+            the PersistentVolumeClaim name and the value is the PersistentVolumeClaim itself.
+        """
+        if namespace is None:
+            namespace = self.namespace
+
+        selectors = utils.selector_kwargs(fields, labels)
+
+        persistentvolumeclaim_list = client.CoreV1Api().list_namespaced_persistent_volume_claim(
+            namespace=namespace,
+            **selectors,
+        )
+
+        persistentvolumeclaims = {}
+        for obj in persistentvolumeclaim_list.items:
+            persistentvolumeclaim = objects.PersistentVolumeClaim(obj)
+            persistentvolumeclaims[persistentvolumeclaim.name] = persistentvolumeclaim
+
+        return persistentvolumeclaims
+
     @staticmethod
     def get_nodes(fields=None, labels=None):
         """Get the Nodes that make up the cluster.
