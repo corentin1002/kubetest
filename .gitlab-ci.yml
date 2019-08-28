@@ -2,7 +2,16 @@ include:
   - project: 'production-purple/ci'
     file: '/templates/python-tox.yml'
 
-clean:
-  script:
-    - tests_env/clean_kube_clust.sh
+#stages:
+#  - testing
+#testing_lib:
+#  stage: testing
+#  only:
+#    - master
+#  script:
+#    - tox 
+#  tags:
+#    - shell
+#    - ansible
+#    - purple
 
