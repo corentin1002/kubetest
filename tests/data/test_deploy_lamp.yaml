@@ -1,0 +1,308 @@
+### NAMESPACE ###
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lamp-client
+
+### SERVICE ###
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache-php
+  namespace: lamp-client
+  labels:
+    name: apache-php
+spec:
+  selector:
+    name: apache-php
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb
+  namespace: lamp-client
+  labels:
+    name: mariadb
+spec:
+  selector:
+    name: mariadb
+  ports:
+  - name: mariadb
+    port: 3306
+    targetPort: 3306
+
+### SECRET ###
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ceph-secret
+  namespace: lamp-client
+type: "kubernetes.io/rbd"
+data:
+  key: QVFEcFZXWmRQWllRQXhBQUdKTGVQa3RXSlUzb205bEhEcEloaFE9PQ==
+
+---
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: user-pass
+  namespace: lamp-client
+data:
+  password.txt: YXNkYXNkYXNkCg==
+
+---
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJnaXRsYWIuaW5mb21hbmlhay5jaDo0NTY3Ijp7InVzZXJuYW1lIjoiY29yZW50aW4uamFjcXVlbWV0QGluZm9tYW5pYWsuY29tIiwicGFzc3dvcmQiOiJnN1BIUkhCcDJLNXM2X3RNeEpycyIsImVtYWlsIjoiY29yZW50aW4uamFjcXVlbWV0QGluZm9tYW5pYWsuY29tIiwiYXV0aCI6IlkyOXlaVzUwYVc0dWFtRmpjWFZsYldWMFFHbHVabTl0WVc1cFlXc3VZMjl0T21jM1VFaFNTRUp3TWtzMWN6WmZkRTE0U25KeiJ9fX0=
+kind: Secret
+metadata:
+  name: regcred2
+  namespace: lamp-client
+type: kubernetes.io/dockerconfigjson
+
+### PERSISTENTVOLUME WWW ###
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: rbd-pv-cust-www
+  namespace: lamp-client
+  labels:
+    name: pv-www
+spec:
+  selector:
+    name: pv-www
+  capacity:
+    storage: 16Mi
+  accessModes:
+    - ReadWriteMany
+  rbd:
+    monitors:
+      - 10.4.39.37:6789
+      - 10.4.39.56:6789
+      - 10.4.39.10:6789
+    pool: pikpoolval
+    image: cust-www
+    user: admin
+    secretRef:
+      name: ceph-secret
+    fsType: xfs
+    readOnly: false
+  persistentVolumeReclaimPolicy: Recycle
+
+### PERSISTENTVOLUMECLAIM WWW ###
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rbd-pv-claim-cust-www
+  namespace: lamp-client
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 16Mi
+
+### PERSISTENTVOLUME DB ###
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: rbd-pv-cust-db
+  namespace: lamp-client
+  labels:
+    name: pv-db
+spec:
+  selector:
+    name: mariadb
+  capacity:
+    storage: 196Mi
+  accessModes:
+    - ReadWriteOnce
+  rbd:
+    monitors:
+      - 10.4.39.37:6789
+      - 10.4.39.56:6789
+      - 10.4.39.10:6789
+    pool: pikpoolval
+    image: cust-db
+    user: admin
+    secretRef:
+      name: ceph-secret
+    fsType: xfs
+    readOnly: false
+  persistentVolumeReclaimPolicy: Recycle
+
+### PERSISTENTVOLUMECLAIM DB ###
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rbd-pv-claim-cust-db
+  namespace: lamp-client
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 196Mi
+
+### CONFIGMAP ###
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vhosts-config
+  namespace: lamp-client
+data:
+  corent-1.info-prod.net.conf: |
+    <VirtualHost *:80>
+    ServerName corent-1.info-prod.net
+    ServerAlias *.corent-1.info-prod.net 8j5rawgqh.preview.infomaniak.website
+    ServerAdmin webmaster@corent-1.info-prod.net
+    DocumentRoot /var/www/corent-1.info-prod.net
+    DirectoryIndex index.php index.html index.htm
+    ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://127.0.0.1:9000/var/www/corent-1.info-prod.net/$1
+    <Directory "/">
+      Options Indexes FollowSymLinks
+      Require all granted
+    </Directory>
+
+    </VirtualHost>
+  corent-2.info-prod.net.conf: |
+    <VirtualHost *:80>
+    ServerName corent-2.info-prod.net
+    ServerAlias *.corent-2.info-prod.net 8j5rawgqh.preview.infomaniak.website
+    ServerAdmin webmaster@corent-2.info-prod.net
+    DocumentRoot /var/www/corent-2.info-prod.net
+    DirectoryIndex index.php index.html index.htm
+    ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://127.0.0.1:9000/var/www/corent-2.info-prod.net/$1
+    <Directory "/">
+      Options Indexes FollowSymLinks
+      Require all granted
+    </Directory>
+
+    </VirtualHost>
+#  corent-3.info-prod.net.conf: |
+#    <VirtualHost *:80>
+#    ServerName corent-3.info-prod.net
+#    ServerAlias *.corent-3.info-prod.net 8j5rawgqh.preview.infomaniak.website
+#    ServerAdmin webmaster@corent-3.info-prod.net
+#    DocumentRoot /var/www/corent-3
+#
+#    </VirtualHost>
+
+### DEPLOYMENT APACHE-PHP ###
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-php
+  labels:
+    name: apache-php
+  namespace: lamp-client
+spec:
+  selector:
+    matchLabels:
+      app: apache-php
+  template:
+    metadata:
+      labels:
+        app: apache-php
+        name: apache-php
+    spec:
+      containers:
+      - name: php-fpm
+        image: gitlab.infomaniak.ch:4567/pasika/pocs/apache-php/php-fpm/php-fpm_with_extensions
+#        imagePullPolicy: "Always"
+#        volumeMounts:
+#        - name: cust-www
+#          mountPath: /var/www/
+#          readOnly: false
+
+      - name: apache-vhosts
+        image: gitlab.infomaniak.ch:4567/pasika/pocs/apache-php/apache-vhosts/apache-vhosts
+#        imagePullPolicy: "Always"
+        ports:
+          - containerPort: 80
+        volumeMounts:
+        - name: vhosts-conf-volume
+          mountPath: /usr/local/apache2/conf/vhosts
+#        - name: cust-www
+#          mountPath: /var/www/
+#          readOnly: true
+
+#      initContainers:
+#      - name: init-volume
+#        image: busybox:latest
+#        command:
+#        - chown
+#        - -R
+#        - 33:33
+#        - /var/www/
+#        volumeMounts:
+#        - name: cust-www
+#          mountPath: /var/www/
+#          readOnly: false
+
+      volumes:
+#      - name: cust-www
+#        persistentVolumeClaim:
+#          claimName: rbd-pv-claim-cust-www
+      - name: vhosts-conf-volume
+        configMap:
+          name: vhosts-config
+      - name: secret-volume
+        secret:
+          secretName: user-pass
+
+      imagePullSecrets:
+        - name: regcred2
+
+### DEPLOYMENT MARIADB ###
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb
+  labels:
+    name: mariadb
+  namespace: lamp-client
+spec:
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+        name: mariadb
+    spec:
+      containers:
+      - name: mariadb
+        image: gitlab.infomaniak.ch:4567/pasika/pocs/apache-php/mariadb/mariadb_no_password
+#        imagePullPolicy: "Always"
+        ports:
+          - containerPort: 3306
+#        volumeMounts:
+#        - name: cust-db
+#          mountPath: /var/lib/mysql
+#          readOnly: false
+
+#      volumes:
+#      - name: cust-db
+#        persistentVolumeClaim:
+#          claimName: rbd-pv-claim-cust-db
+
+      imagePullSecrets:
+        - name: regcred2
