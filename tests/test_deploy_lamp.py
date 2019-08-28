@@ -83,4 +83,4 @@ def test_deployment(kube):
     print("")
 
 ## Suppression
-    kube.delete()
+    kube.delete("lamp-client")
