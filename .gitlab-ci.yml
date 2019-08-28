@@ -1,13 +1,17 @@
-stages:
-  - testing
-testing_lib:
-  stage: testing
-  only:
-    - master
-  script:
-    - tox 
-  tags:
-    - shell
-    - ansible
-    - purple
+include:
+  - project: 'production-purple/ci'
+    file: '/templates/python-tox.yml'
+
+#stages:
+#  - testing
+#testing_lib:
+#  stage: testing
+#  only:
+#    - master
+#  script:
+#    - tox 
+#  tags:
+#    - shell
+#    - ansible
+#    - purple
 
