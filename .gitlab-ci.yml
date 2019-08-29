@@ -1,18 +1,19 @@
+stages:
+  - test
+  - clean
+
 include:
   - project: 'production-purple/ci'
     file: '/templates/python-tox.yml'
 
-stages:
-  - clean
-clean:
+clean_resources:
   stage: clean
   script:
     - export KUBECONFIG=tests_env/kubeconfig-pikdev-unittest-admin.conf
+    - kubectl delete namespace lamp-client
     - kubectl delete pv rbd-pv-cust-db
     - kubectl delete pv rbd-pv-cust-www
-    - kubectl delete namespace lamp-client
   tags:
     - shell
-    - ansible
     - purple
 
