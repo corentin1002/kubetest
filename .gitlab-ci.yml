@@ -4,14 +4,15 @@ include:
 
 #stages:
 #  - testing
-#testing_lib:
-#  stage: testing
-#  only:
-#    - master
-#  script:
-#    - tox 
-#  tags:
-#    - shell
-#    - ansible
-#    - purple
+clean:
+  stage: clean
+  script:
+    - export KUBECONFIG=tests_env/kubeconfig-pikdev-unittest-admin.conf
+    - kubectl delete pv rbd-pv-cust-db
+    - kubectl delete pv rbd-pv-cust-www
+    - kubectl delete namespace lamp-client
+  tags:
+    - shell
+    - ansible
+    - purple
 
