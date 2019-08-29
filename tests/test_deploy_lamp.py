@@ -81,3 +81,6 @@ def test_deployment(kube):
     for service in services:
         print(service, end=" ")
     print("")
+
+## Suppression
+#    kube.delete(deployments)
