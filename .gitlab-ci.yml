@@ -14,6 +14,5 @@ clean_resources:
     - kubectl delete namespace lamp-client
     - kubectl delete pv rbd-pv-cust-db
     - kubectl delete pv rbd-pv-cust-www
-    - kubectl delete pvc my-pvc
     - kubectl delete pv my-pv
 
