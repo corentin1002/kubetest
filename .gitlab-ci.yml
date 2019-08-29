@@ -8,6 +8,7 @@ include:
 
 clean_resources:
   stage: clean
+  image: gitlab.infomaniak.ch:4567/production-purple/ci/kubectl/master:latest
   script:
     - export KUBECONFIG=tests_env/kubeconfig-pikdev-unittest-admin.conf
     - kubectl delete namespace lamp-client
@@ -16,5 +17,4 @@ clean_resources:
   tags:
     - shell
     - purple
-    - kubernetes
 
