@@ -2,8 +2,8 @@ include:
   - project: 'production-purple/ci'
     file: '/templates/python-tox.yml'
 
-#stages:
-#  - testing
+stages:
+  - clean
 clean:
   stage: clean
   script:
