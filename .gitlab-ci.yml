@@ -16,4 +16,5 @@ clean_resources:
   tags:
     - shell
     - purple
+    - kubernetes
 
