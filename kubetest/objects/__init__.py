@@ -5,6 +5,7 @@
 from .api_object import ApiObject
 from .clusterrolebinding import ClusterRoleBinding
 from .configmap import ConfigMap
+from .persistentvolumeclaim import PersistentVolumeClaim
 from .container import Container
 from .daemonset import DaemonSet
 from .deployment import Deployment
